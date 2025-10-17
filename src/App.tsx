@@ -1,5 +1,6 @@
 import { useState } from "react"
 import Square from "./Square"
+import Winner from "./Winner"
 
 function App() {
   const CIRCLE = "CIRCLE"
@@ -13,32 +14,34 @@ function App() {
       EMPTY, EMPTY, EMPTY,
       EMPTY, EMPTY, EMPTY
     ],
+    Winner: false
   })
 
   const checkWinner = (theGrid) => {
     // Check rows
     for (let offset = 0; offset <= 6; offset += 3) {
       if (theGrid[0 + offset] != EMPTY && theGrid[0 + offset] == theGrid[1 + offset] && theGrid[1 + offset] == theGrid[2 + offset]) {
-        alert(`Player ${theGrid[0 + offset]} wins!`)
+        return true
       }
     }
     // Check columns
     for (let offset = 0; offset <= 2; offset += 1) {
       if (theGrid[0 + offset] != EMPTY && theGrid[0 + offset] == theGrid[3 + offset] && theGrid[3 + offset] == theGrid[6 + offset]) {  
-        alert(`Player ${theGrid[0 + offset]} wins!`)
+        return true
       }
     }
     // Check diagonals
     if (theGrid[0] != EMPTY && theGrid[0] == theGrid[4] && theGrid[4] == theGrid[8]) {
-      alert(`Player ${theGrid[0]} wins!`)
+      return true
     }
     if (theGrid[2] != EMPTY && theGrid[2] == theGrid[4] && theGrid[4] == theGrid[6]) {
-      alert(`Player ${theGrid[2]} wins!`)
+      return true
     }
     // Check for draw
     if (!theGrid.includes(EMPTY)) {
       alert("It's a draw!") 
     }
+    return false
   }
   const handleTurn = (pos) => {
     const allsquarepositions = [...squares.position]
@@ -46,8 +49,8 @@ function App() {
     setSquares({
       player: squares.player == CROSS ? CIRCLE : CROSS,
       position: allsquarepositions,
+      Winner: checkWinner(allsquarepositions)
     })
-    checkWinner(allsquarepositions)
   }
 
 
@@ -68,6 +71,7 @@ function App() {
       <div className="flex items-center justify-center">
         <p className="text-xl">Player {squares.player == CROSS ? "X's" : "O's"} turn</p>
       </div>
+        {squares.Winner && <Winner />}
     </div>
   )
 }
