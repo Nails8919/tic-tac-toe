@@ -1,6 +1,6 @@
 import { useState } from "react"
-import Square from "./Square"
-import Winner from "./Winner"
+import Winner from "./components/Winner"
+import Square from "./components/Square"
 
 function App() {
   const CIRCLE = "CIRCLE"
@@ -14,7 +14,8 @@ function App() {
       EMPTY, EMPTY, EMPTY,
       EMPTY, EMPTY, EMPTY
     ],
-    Winner: false
+    Winner: false,
+    Draw: false
   })
 
   const checkWinner = (theGrid) => {
@@ -26,7 +27,7 @@ function App() {
     }
     // Check columns
     for (let offset = 0; offset <= 2; offset += 1) {
-      if (theGrid[0 + offset] != EMPTY && theGrid[0 + offset] == theGrid[3 + offset] && theGrid[3 + offset] == theGrid[6 + offset]) {  
+      if (theGrid[0 + offset] != EMPTY && theGrid[0 + offset] == theGrid[3 + offset] && theGrid[3 + offset] == theGrid[6 + offset]) {
         return true
       }
     }
@@ -39,30 +40,40 @@ function App() {
     }
     // Check for draw
     if (!theGrid.includes(EMPTY)) {
-      alert("It's a draw!") 
+      return true
     }
     return false
   }
+
+  const checkdraw = (theGrid) => {
+    if (!theGrid.includes(EMPTY)) {
+      return !squares.Winner
+    }
+    return false
+  }
+  
   const handleTurn = (pos) => {
     const allsquarepositions = [...squares.position]
     allsquarepositions[pos] = squares.player
     setSquares({
       player: squares.player == CROSS ? CIRCLE : CROSS,
       position: allsquarepositions,
-      Winner: checkWinner(allsquarepositions)
+      Winner: checkWinner(allsquarepositions),
+      Draw: checkdraw(allsquarepositions)
     })
+  }
 
-    const resetGame = () => {
-      setSquares({
-        player: CROSS,
-        position: [
-          EMPTY, EMPTY, EMPTY,
-          EMPTY, EMPTY, EMPTY,
-          EMPTY, EMPTY, EMPTY
-        ],
-        Winner: false
-      })
-    }
+  const resetGame = () => {
+    setSquares({
+      player: CROSS,
+      position: [
+        EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY,
+        EMPTY, EMPTY, EMPTY
+      ],
+      Winner: false,
+      Draw: false
+    })
   }
 
   return (
@@ -82,7 +93,8 @@ function App() {
       <div className="flex items-center justify-center">
         <p className="text-xl">Player {squares.player == CROSS ? "X's" : "O's"} turn</p>
       </div>
-        {squares.Winner && <Winner rstGame={resetGame}/>}
+      {squares.Winner && <Winner rstGame={resetGame} sqState={squares.Draw} />}
+      {squares.Draw && <Winner rstGame={resetGame} sqState={squares.Draw} />}
     </div>
   )
 }
