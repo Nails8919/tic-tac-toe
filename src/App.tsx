@@ -51,8 +51,19 @@ function App() {
       position: allsquarepositions,
       Winner: checkWinner(allsquarepositions)
     })
-  }
 
+    const resetGame = () => {
+      setSquares({
+        player: CROSS,
+        position: [
+          EMPTY, EMPTY, EMPTY,
+          EMPTY, EMPTY, EMPTY,
+          EMPTY, EMPTY, EMPTY
+        ],
+        Winner: false
+      })
+    }
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">
@@ -71,7 +82,7 @@ function App() {
       <div className="flex items-center justify-center">
         <p className="text-xl">Player {squares.player == CROSS ? "X's" : "O's"} turn</p>
       </div>
-        {squares.Winner && <Winner />}
+        {squares.Winner && <Winner rstGame={resetGame}/>}
     </div>
   )
 }
